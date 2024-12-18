@@ -41,24 +41,9 @@ WHERE f.`length` > (SELECT avg(`length`) FROM film f);
 ### Решение 3
 
 ```sql
-SELECT SUM(1), DATE_FORMAT(rental_date, '%M-%Y') AS mon
-FROM rental r 
-GROUP BY DATE_FORMAT(rental_date, '%M-%Y')
-HAVING mon = 
-(
-	SELECT DATE_FORMAT(payment_date, '%M-%Y')
-	FROM payment p 
-	GROUP BY DATE_FORMAT(payment_date, '%M-%Y')
-	HAVING sum(amount) = 
-	(
-		SELECT MAX(sum_month)
-		FROM 
-		(
-			SELECT sum(amount) sum_month
-			FROM payment p 
-			GROUP BY DATE_FORMAT(payment_date, '%M-%Y')
-		) AS maximum
-	)
-);
+SELECT month (payment_date) AS mounth, count(payment_id) AS payments, sum(amount) AS amount
+FROM payment
+GROUP BY month(payment_date)
+ORDER BY count(payment_id) DESC LIMIT 1 ;
 ```
-![image](https://github.com/user-attachments/assets/c287ce18-a4e1-4ee9-8245-7b608df72702)
+![image](https://github.com/user-attachments/assets/bda8cd3d-b62f-4526-8f85-5067e998a442)
